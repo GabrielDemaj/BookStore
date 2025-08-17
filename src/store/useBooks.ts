@@ -90,16 +90,16 @@ export const useBooks = createWithEqualityFn<
         }
       },
       searchBooks: async (query: string, page = 1, limit = 20) => {
-        set({ refreshing: true, loading: true }); // show spinner
+        set({ refreshing: true, loading: true });
         console.log('searchBooks called', query);
         try {
           const res = await api.get('/books/search', {
-            params: { search: query, page, limit }, // use query params
+            params: { search: query, page, limit },
           });
           console.log('searchBooks result', res.data.items);
 
           set({
-            books: res.data.items, // update the book list
+            books: res.data.items,
             error: null,
             loading: false,
             refreshing: false,

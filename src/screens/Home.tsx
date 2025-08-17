@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import { t } from 'i18next';
 import { Image, View, FlatList, Animated } from 'react-native';
 import { shallow } from 'zustand/shallow';
+import Button from '@components/Button';
 
 type Props = {};
 const BookItem = ({
@@ -45,7 +46,7 @@ const BookItem = ({
         { transform: [{ translateX }] }, // Apply animation
       ]}
     >
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} testID={`book_item_${index}`}>
         {item.image_url ? (
           <Image source={{ uri: item.image_url }} style={styles.img} />
         ) : (
@@ -152,42 +153,26 @@ const Home = (props: Props) => {
     },
   }));
 
-  const renderItem = (item: any, index: any) => {
-    return (
-      <TouchableOpacity
-        onPress={() => onCardPress(item)}
-        style={[s.wrapper, index === 0 && { marginTop: 20 }]}
-      >
-        {item.image_url ? (
-          <Image source={{ uri: item.image_url }} style={s.img} />
-        ) : (
-          <Image source={require('@assets/img.png')} style={s.img} />
-        )}
-        <View style={s.card}>
-          <View style={s.align}>
-            <Text style={s.name}>{item.title}</Text>
-            <Text style={s.price}>{item.price}$</Text>
-          </View>
-          <Text style={s.author}>{item.author}</Text>
-          {item.description ? (
-            <Text style={s.description}>{item.description}</Text>
-          ) : null}
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   if (initialLoading) return <Loader />;
 
   return (
     <View style={s.container}>
       <View style={s.header}>
-        <Text style={s.title}>{t('hello')} Gabriel</Text>
-        <TouchableOpacity style={s.icon} onPress={handleNavigate}>
+        <Text testID="home_title" style={s.title}>
+          {t('hello')} Gabriel
+        </Text>
+        <TouchableOpacity
+          testID="settings_button"
+          style={s.icon}
+          onPress={handleNavigate}
+        >
           <SettingsIcon />
         </TouchableOpacity>
       </View>
-
+      <Button
+        text="Random Book"
+        onPress={() => updateRandom({ refreshing: false })}
+      />
       <FlatList
         data={books}
         // renderItem={({ item, index }) => renderItem(item, index)}

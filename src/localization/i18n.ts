@@ -4,19 +4,18 @@ import en from './en/translation.json';
 import sq from './sq/translation.json';
 
 const resources = {
-  en: {
-    translation: en,
-  },
-  sq: {
-    translation: sq,
-  },
+  en: { translation: en },
+  sq: { translation: sq },
 };
 
-i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
-  .init({
-    compatibilityJSON: 'v3', //To make it work for Android devices, add this line.
-    resources,
-    lng: 'en', // default language to use.
-  });
+i18n.use(initReactI18next).init({
+  compatibilityJSON: 'v4',
+  resources,
+  lng: 'en',
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false,
+  },
+});
+
 export default i18n;

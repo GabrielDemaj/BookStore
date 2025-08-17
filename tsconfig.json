@@ -13,6 +13,7 @@
       "@hooks/*": ["./hooks/*"],
       "@navigation/*": ["./navigation/*"],
       "@providers/*": ["./providers/*"],
+      "@localization/*": ["./localization/*"],
       "@screens/*": ["./screens/*"],
       "@store/*": ["./store/*"],
       "@utils/*": ["./utils/*"],

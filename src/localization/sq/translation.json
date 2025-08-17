@@ -1,5 +1,6 @@
 {
   "_comment": "src/localization/en/translation.json",
   "oopsSomethingWentWrong": "Oops diçka nuk është në rregull...",
-  "profile": "Profili"
+  "profile": "Profili",
+  "hello": "Hello"
 }

@@ -30,18 +30,9 @@ api.interceptors.request.use(
     }
     const accessToken = await storage.getItem('accessToken');
 
-    const sessionId = await storage.getItem('sessionId');
-
     if (accessToken) {
       config.headers['Authorization'] = 'Bearer ' + accessToken;
     }
-
-    if (sessionId) {
-      config.headers['X-Session-ID'] = sessionId;
-    }
-    // if (sessionId) {
-    //   config.headers['X-Language-Code'] = sessionId;
-    // }
 
     return config;
   },

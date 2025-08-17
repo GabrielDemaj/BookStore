@@ -19,6 +19,9 @@ import {
 } from '@utils/useBookStoreNavigation';
 import { View } from 'react-native';
 import { t } from 'i18next';
+import SingleBook from '@screens/SingleBook';
+import CreateBookScreen from '@screens/CreateBookScreen';
+import EditBookScreen from '@screens/EditBookScreen';
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -44,7 +47,34 @@ const Authenticated = () => {
 
           ...TransitionPresets.DefaultTransition,
           animation: 'slide_from_right',
-          header: () => <Header middleText={t('profile')} />,
+          headerShown: false,
+        }}
+      />
+      <RootStack.Screen
+        name="SingleBook"
+        component={SingleBook}
+        options={{
+          cardStyle: { backgroundColor: theme.palette.background },
+          headerShown: false,
+          ...TransitionPresets.DefaultTransition,
+        }}
+      />
+      <RootStack.Screen
+        name="CreateBookScreen"
+        component={CreateBookScreen}
+        options={{
+          cardStyle: { backgroundColor: theme.palette.background },
+          ...TransitionPresets.DefaultTransition,
+          header: () => <Header middleText={t('create')} />,
+        }}
+      />
+      <RootStack.Screen
+        name="EditBookScreen"
+        component={EditBookScreen}
+        options={{
+          cardStyle: { backgroundColor: theme.palette.background },
+          ...TransitionPresets.DefaultTransition,
+          header: () => <Header middleText={t('edit')} />,
         }}
       />
     </RootStack.Navigator>

@@ -7,6 +7,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 export type RootStackParamList = {
   Home: undefined;
   Profile: undefined;
+  SingleBook: any;
+  CreateBookScreen: undefined;
+  EditBookScreen: undefined;
 };
 
 export function useBookStoreNavigation() {

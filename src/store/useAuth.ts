@@ -5,7 +5,8 @@ import { createWithEqualityFn } from 'zustand/traditional';
 import { shallow } from 'zustand/shallow';
 import { CommonActions } from '@react-navigation/native';
 import Toast from '@components/Toast';
-import i18next from 'i18next';
+import { t } from 'i18next';
+import { navigationContainerRef } from '@utils/useBookStoreNavigation';
 
 type State = {
   id: string;
@@ -20,7 +21,7 @@ type Actions = {
   authenticate: (values: any, navigate?: any) => void;
   register: (values: any, navigate?: any) => void;
   clearErrors: () => void;
-  handleLogOut: () => void;
+  logOut: () => void;
   handleRefresh: () => void;
   getProfile: () => void;
 };
@@ -69,6 +70,7 @@ export const useAuth = createWithEqualityFn<
           console.log('res.data.user', res.data);
           let user = res.data.user;
           console.log('user', user);
+          get().getProfile();
           set({
             error: null,
             user: user,
@@ -76,17 +78,17 @@ export const useAuth = createWithEqualityFn<
             loading: false,
           });
           if (navigate) {
-            navigate?.current?.present();
+            navigationContainerRef.goBack();
           }
         } catch (error: any) {
           console.log('error login2', error.response.data);
           Toast.show({
-            text1: i18next.t('oopsSomethingWentWrong'),
-            text2: error?.response?.data?.errors?.['__all__'],
+            text1: t('oopsSomethingWentWrong'),
+            text2: error?.response?.data?.message || error?.response?.data,
             type: 'error',
           });
           set({
-            error: error?.response?.data?.errors || null,
+            error: error?.response?.data?.message || error?.response?.data,
             loading: false,
           });
         }
@@ -121,36 +123,37 @@ export const useAuth = createWithEqualityFn<
       clearErrors: () => {
         set({ error: null, loading: false });
       },
-      handleLogOut: async () => {
+      logOut: async () => {
         set({ loading: true });
         try {
-          ApiStorage.removeItem('accessToken');
-          set({ isAuthenticated: false, loading: false });
+          await ApiStorage.removeItem('accessToken');
+          await ApiStorage.removeItem('refreshToken');
+          set({ user: null, isAuthenticated: false, loading: false });
         } catch (error: any) {
           set({ loading: false });
         }
       },
+
       handleRefresh: async () => {
+        const refreshToken = await ApiStorage.getItem('refreshToken');
+        console.log('refreshToken', refreshToken);
+
         try {
-          const res = await api.post('/register/');
-          console.log('register', res.data);
-          set({
-            error: null,
-            loading: false,
-          });
+          const res = await api.post('/auth/refresh', { token: refreshToken });
+          console.log('res.data handleRefresh', res.data);
+          await ApiStorage.setItem('accessToken', res.data.accessToken);
         } catch (error: any) {
-          console.log('register', error.response.data);
-          set({
-            error: error.response.data.errors || null,
-            loading: false,
-          });
+          console.log('error handleRefresh ', error.response.data);
+          get().logOut();
         }
       },
+
       getProfile: async () => {
         set({ refreshing: true });
         try {
-          const res = await api.get('/profile/');
-          set({ user: res.data.user, refreshing: false });
+          const res = await api.get('/auth/profile/');
+          console.log(res.data);
+          set({ user: res.data, refreshing: false });
         } catch (error: any) {
           set({ refreshing: false });
         }

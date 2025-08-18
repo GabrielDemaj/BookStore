@@ -1,3 +1,4 @@
+import Button from '@components/Button';
 import Loader from '@components/Loader';
 import SearchBar from '@components/Searchbar';
 import Text from '@components/Text';
@@ -5,14 +6,15 @@ import TouchableOpacity from '@components/TouchableOpacity';
 import { useStyles } from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import SettingsIcon from '@icons/settings.svg';
+import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '@store/useAuth';
 import { useBooks } from '@store/useBooks';
 import { useBookStoreNavigation } from '@utils/useBookStoreNavigation';
-import { percentWidth } from '@variables/index';
-import { useEffect, useRef, useState } from 'react';
+import { percentHeight, percentWidth } from '@variables/index';
 import { t } from 'i18next';
-import { Image, View, FlatList, Animated } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, FlatList, Image, View } from 'react-native';
 import { shallow } from 'zustand/shallow';
-import Button from '@components/Button';
 
 type Props = {};
 const BookItem = ({
@@ -26,7 +28,7 @@ const BookItem = ({
   onPress: () => void;
   styles: any;
 }) => {
-  const translateX = useRef(new Animated.Value(100)).current; // Start 100px to the right
+  const translateX = useRef(new Animated.Value(100)).current;
 
   useEffect(() => {
     Animated.spring(translateX, {
@@ -43,10 +45,10 @@ const BookItem = ({
       style={[
         styles.wrapper,
         index === 0 && { marginTop: 20 },
-        { transform: [{ translateX }] }, // Apply animation
+        { transform: [{ translateX }] },
       ]}
     >
-      <TouchableOpacity onPress={onPress} testID={`book_item_${index}`}>
+      <TouchableOpacity onPress={onPress}>
         {item.image_url ? (
           <Image source={{ uri: item.image_url }} style={styles.img} />
         ) : (
@@ -72,9 +74,10 @@ const Home = (props: Props) => {
     state => state,
     shallow,
   );
+  const { handleRefresh, user } = useAuth(state => state, shallow);
   const theme = useTheme();
   const [initialLoading, setInitialLoading] = useState(true);
-
+  console.log('user', user);
   const handleNavigate = () => {
     navigate('Profile');
   };
@@ -84,6 +87,11 @@ const Home = (props: Props) => {
     navigate('SingleBook', { book });
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      handleRefresh();
+    }, []),
+  );
   useEffect(() => {
     getBooks(1, 20);
     setInitialLoading(false);
@@ -151,6 +159,21 @@ const Home = (props: Props) => {
       borderRadius: 10,
       height: 40,
     },
+    empty: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: percentHeight(100) - theme.insets.top - 80,
+    },
+    emptyText: {
+      fontSize: 24,
+      fontFamily: theme.fonts.bold,
+    },
+    emptyBtn: {
+      marginTop: 20,
+      height: 40,
+      paddingHorizontal: 15,
+    },
   }));
 
   if (initialLoading) return <Loader />;
@@ -159,7 +182,7 @@ const Home = (props: Props) => {
     <View style={s.container}>
       <View style={s.header}>
         <Text testID="home_title" style={s.title}>
-          {t('hello')} Gabriel
+          {t('hello')} {user?.name ? user.name : ''}
         </Text>
         <TouchableOpacity
           testID="settings_button"
@@ -169,13 +192,9 @@ const Home = (props: Props) => {
           <SettingsIcon />
         </TouchableOpacity>
       </View>
-      <Button
-        text="Random Book"
-        onPress={() => updateRandom({ refreshing: false })}
-      />
+
       <FlatList
         data={books}
-        // renderItem={({ item, index }) => renderItem(item, index)}
         renderItem={({ item, index }) => (
           <BookItem
             item={item}
@@ -191,6 +210,16 @@ const Home = (props: Props) => {
         ListHeaderComponent={() => (
           <View style={s.search}>
             <SearchBar />
+          </View>
+        )}
+        ListEmptyComponent={() => (
+          <View style={s.empty}>
+            <Text style={s.emptyText}>No books found</Text>
+            <Button
+              onPress={() => getBooks(1, 20)}
+              text="Refresh"
+              style={s.emptyBtn}
+            />
           </View>
         )}
         stickyHeaderIndices={[0]}

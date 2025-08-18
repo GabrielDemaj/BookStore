@@ -1,14 +1,14 @@
-import { Image, ScrollView, Switch, View } from 'react-native';
-import Text from '@components/Text';
 import Button from '@components/Button';
+import Divider from '@components/Divider';
+import Text from '@components/Text';
 import { useStyles } from '@hooks/useStyles';
+import useTheme from '@hooks/useTheme';
 import { useAuth } from '@store/useAuth';
-import { shallow } from 'zustand/shallow';
+import { ThemeModeEnum, useThemeSlice } from '@store/useThemeSlice';
 import { useBookStoreNavigation } from '@utils/useBookStoreNavigation';
 import { t } from 'i18next';
-import { ThemeModeEnum, useThemeSlice } from '@store/useThemeSlice';
-import useTheme from '@hooks/useTheme';
-import Divider from '@components/Divider';
+import { Image, Switch, View } from 'react-native';
+import { shallow } from 'zustand/shallow';
 
 type Props = {};
 

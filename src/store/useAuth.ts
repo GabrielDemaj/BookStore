@@ -1,12 +1,11 @@
-import { createJSONStorage, persist, StateStorage } from 'zustand/middleware';
-import { MMKV } from 'react-native-mmkv';
-import api, { storage as ApiStorage } from '@utils/api';
-import { createWithEqualityFn } from 'zustand/traditional';
-import { shallow } from 'zustand/shallow';
-import { CommonActions } from '@react-navigation/native';
 import Toast from '@components/Toast';
-import { t } from 'i18next';
+import api, { storage as ApiStorage } from '@utils/api';
 import { navigationContainerRef } from '@utils/useBookStoreNavigation';
+import { t } from 'i18next';
+import { MMKV } from 'react-native-mmkv';
+import { createJSONStorage, persist, StateStorage } from 'zustand/middleware';
+import { shallow } from 'zustand/shallow';
+import { createWithEqualityFn } from 'zustand/traditional';
 
 type State = {
   id: string;

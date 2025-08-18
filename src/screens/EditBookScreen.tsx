@@ -2,27 +2,25 @@ import Button from '@components/Button';
 import Divider from '@components/Divider';
 import Textinput from '@components/TextInput';
 import { useStyles } from '@hooks/useStyles';
+import useTheme from '@hooks/useTheme';
+import TrashIcon from '@icons/trash.svg';
 import { useBooks } from '@store/useBooks';
 import { createBookSchema } from '@utils/validations';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Alert, Keyboard, Modal, Pressable, View } from 'react-native';
+import { Alert, Keyboard, Pressable, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { shallow } from 'zustand/shallow';
-import TrashIcon from '@icons/trash.svg';
-import useTheme from '@hooks/useTheme';
-import { useState } from 'react';
-import Text from '@components/Text';
 
 type Props = {};
 
 const EditBookScreen = (props: Props) => {
   const { t } = useTranslation();
-  const { loading, editBook, singleBook, deleteBook } = useBooks(
+  const { loading, editBook, singleBook, deleteBook, updateRandom } = useBooks(
     state => state,
     shallow,
   );
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  console.log('loading', loading);
 
   const theme = useTheme();
   const formik = useFormik({
@@ -56,8 +54,8 @@ const EditBookScreen = (props: Props) => {
         },
         {
           text: 'Delete',
-          style: 'destructive', // Red color for destructive action
-          onPress: onConfirm, // Callback for confirming deletion
+          style: 'destructive',
+          onPress: onConfirm,
         },
       ],
       {
@@ -149,6 +147,7 @@ const EditBookScreen = (props: Props) => {
               style={s.delete}
               loading={loading}
               onPress={() => showDeleteAlert(handleDelete)}
+              // onPress={() => updateRandom({ loading: false })}
               startIcon={
                 <TrashIcon
                   fill={theme.palette.white}

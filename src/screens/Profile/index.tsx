@@ -1,27 +1,21 @@
 import Text from '@components/Text';
 import { useStyles } from '@hooks/useStyles';
+import useTheme from '@hooks/useTheme';
 import ArrowLeft from '@icons/back.svg';
-import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '@store/useAuth';
 import { useBookStoreNavigation } from '@utils/useBookStoreNavigation';
-import { useCallback } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { shallow } from 'zustand/shallow';
 import Login from './components/Login';
 import ProfileCard from './components/ProfileCard';
-import useTheme from '@hooks/useTheme';
 
 type Props = {};
 
 const Profile = (props: Props) => {
   const { goBack } = useBookStoreNavigation();
   const theme = useTheme();
-  const { isAuthenticated, handleRefresh } = useAuth(state => state, shallow);
-  useFocusEffect(
-    useCallback(() => {
-      handleRefresh();
-    }, []),
-  );
+  const { isAuthenticated } = useAuth(state => state, shallow);
+
   const s = useStyles(theme => ({
     container: {
       flex: 1,
